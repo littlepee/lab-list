@@ -25,6 +25,8 @@ queue_t *q_new()
 {
     queue_t *q = malloc(sizeof(queue_t));
     /* What if malloc returned NULL? */
+    if (q == NULL)  // Return NULL if could not allocate space
+        return NULL;
     q->head = NULL;
 
     q->q_tail = NULL;
@@ -36,6 +38,9 @@ queue_t *q_new()
 /* Free all storage used by queue */
 void q_free(queue_t *q)
 {
+    if (q == NULL)
+        return;
+
     while (q->head) {
         list_ele_t *tmp = (q->head);
         q->head = (q->head)->next;
@@ -55,12 +60,14 @@ void q_free(queue_t *q)
  */
 bool q_insert_head(queue_t *q, char *s)
 {
-    if (q == NULL)
+    if (q == NULL)  // Return false if q is NULL
         return false;
 
     list_ele_t *newh;
     /* What should you do if the q is NULL? */
     newh = malloc(sizeof(list_ele_t));
+    if (newh == NULL)  // could not allocate space
+        return false;
     /* Don't forget to allocate space for the string and copy it */
     /* What if either call to malloc returns NULL? */
     newh->next = q->head;
@@ -85,11 +92,14 @@ bool q_insert_tail(queue_t *q, char *s)
 {
     /* You need to write the complete code for this function */
     /* Remember: It should operate in O(1) time */
-    if (q == NULL)
+    if (q == NULL)  // Return false if q is NULL
         return false;
 
     list_ele_t *new;
     new = malloc(sizeof(list_ele_t));
+    if (new == NULL)  //  could not allocate space
+        return false;
+
     new->next = NULL;
     new->value = strdup(s);
     if (q->q_size == 0) {
@@ -102,7 +112,6 @@ bool q_insert_tail(queue_t *q, char *s)
     q->q_size++;
 
     return true;
-    // return false;
 }
 
 /*
@@ -116,23 +125,26 @@ bool q_insert_tail(queue_t *q, char *s)
 bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
 {
     /* You need to fix up this code. */
-    if (q == NULL)
+    if ((q == NULL) ||
+        (q->q_size == 0))  // Return false if queue is NULL or empty.
         return false;
 
     if (sp) {  // If sp is non-NULL
-        int string_size = strlen((q->head)->value);
+        list_ele_t *tmp = q->head;
+        q->head = q->head->next;
+        int string_size = strlen(tmp->value);
         string_size =
             (string_size > (bufsize - 1))
                 ? (bufsize - 1)
                 : string_size;  // up to a maximum of bufsize-1 characters
-        strncpy(sp, (q->head)->value,
-                string_size);    // copy the removed string to *sp
-        sp[string_size] = '\0';  // plus a null terminator
+        strncpy(sp, tmp->value, string_size);  // copy the removed string to *sp
+        sp[string_size] = '\0';                // plus a null terminator
+        free(tmp);
+        q->q_size--;
+        return true;
     }
 
-    q->head = q->head->next;
-    q->q_size--;
-    return true;
+    return false;
 }
 
 /*
@@ -143,9 +155,9 @@ int q_size(queue_t *q)
 {
     /* You need to write the code for this function */
     /* Remember: It should operate in O(1) time */
-
+    if (q == NULL)  // Return 0 if q is NULL
+        return 0;
     return q->q_size;
-    // return 0;
 }
 
 /*
