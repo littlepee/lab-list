@@ -184,15 +184,24 @@ void q_reverse(queue_t *q)
 
     list_ele_t *next_element;
     list_ele_t *current = q->head;
-    list_ele_t *previous = NULL;
+    // list_ele_t *previous = NULL;
 
     q->q_tail = q->head;
-
+    /*
     while (current) {
         next_element = current->next;
         current->next = previous;
         previous = current;
         current = next_element;
         q->head = previous;
+    }
+    */
+    while (current) {
+        q->head = current;
+
+        next_element = current->next;
+        current->next = current->pre;
+        current->pre = next_element;
+        current = next_element;
     }
 }
