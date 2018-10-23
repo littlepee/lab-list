@@ -148,6 +148,8 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
         sp[string_size] = '\0';                // plus a null terminator
         free(tmp);
         q->q_size--;
+        if (q->q_size)
+            q->head->pre = NULL;
         return true;
     }
 
