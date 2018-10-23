@@ -71,10 +71,12 @@ bool q_insert_head(queue_t *q, char *s)
     /* Don't forget to allocate space for the string and copy it */
     /* What if either call to malloc returns NULL? */
     newh->next = q->head;
-
+    newh->pre = NULL;
     newh->value = strdup(s);
     if (q->q_size == 0) {
         q->q_tail = newh;
+    } else {
+        q->head->pre = newh;
     }
 
     q->head = newh;
@@ -107,8 +109,10 @@ bool q_insert_tail(queue_t *q, char *s)
     new->value = strdup(s);
     if (q->q_size == 0) {
         q->head = new;
+        new->pre = NULL;
     } else {
         q->q_tail->next = new;
+        new->pre = q->q_tail;
     }
 
     q->q_tail = new;
